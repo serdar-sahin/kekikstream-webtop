@@ -1,0 +1,41 @@
+﻿@inherits Volo.Abp.AspNetCore.Components.AbpComponentBase
+
+@* @implements IAsyncDisposable *@
+@inject IJSRuntime JS
+
+<div class="text-light mt-1">
+    <button class="btn text-light" href="#" id="ToolbarChangeTheme">
+        <i class="fas fa-sun" id="ToolbarChangeThemeIcon"></i>
+    </button>
+</div>
+
+@code {
+    private IJSObjectReference? module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await JS.InvokeAsync<IJSObjectReference>("import", "./Components/ChangeTheme/ChangeTheme.razor.js");
+
+            //await module.InvokeVoidAsync("ChangeTheme.toggleTheme");
+        }
+    }
+
+    // private async Task ToggleTheme()
+    // {
+    //     // js içinden tetikleniyor
+    //     //await module.InvokeVoidAsync("ChangeTheme.toggleTheme");
+    //     //StateHasChanged();
+    // }
+
+
+    //  JavaScript interop calls cannot be issued at this time. This is because the circuit has disconnected and is being disposed.
+    // async ValueTask IAsyncDisposable.DisposeAsync()
+    // {
+    //     if (module is not null)
+    //     {
+    //         await module.DisposeAsync();
+    //     }
+    // }
+}
