@@ -9,7 +9,7 @@
 * [.NET9.0+ SDK](https://dotnet.microsoft.com/download/dotnet)
 * [Python 3.10+](https://www.python.org/)
 
-### Çalıştırmak
+### Nasıl çalışır
 
 * install python
 * pip install KekikStream

@@ -9,7 +9,7 @@ Web-based cross-platform desktop application integrated with [KekikStream](https
 * [.NET9.0+ SDK](https://dotnet.microsoft.com/download/dotnet)
 * [Python 3.11+](https://www.python.org/)
 
-### Configurations
+### How it works
 
 * install python
 * pip install KekikStream
