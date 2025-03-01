@@ -2,7 +2,7 @@
 
 ## KekikStream Web Tabanlı Desktop Uygulama
 
-KekikStream ve KekikStreamAPI ile entegre web tabanlı cross platform masaüstü uygulaması
+[KekikStream](https://github.com/keyiflerolsun/KekikStream) ve [KekikStreamAPI](https://github.com/keyiflerolsun/KekikStreamAPI) ile entegre web tabanlı cross platform masaüstü uygulaması
 
 ### Bağımlılıklar
 
