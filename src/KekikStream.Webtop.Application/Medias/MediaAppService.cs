@@ -12,16 +12,19 @@ using System.IO;
 using Microsoft.Extensions.Hosting;
 using System.Web;
 using System.Collections;
+using KekikStream.Webtop.Converters;
 
 namespace KekikStream.Webtop.Medias;
 
 public class MediaAppService : WebtopAppService, IMediaAppService
 {
     private readonly IHostEnvironment _hostEnvironment;
-    
-    public MediaAppService(IHostEnvironment hostEnvironment)
+    private readonly IKekikApiConverter _kekikApiConverter;
+
+    public MediaAppService(IHostEnvironment hostEnvironment, IKekikApiConverter kekikApiConverter)
     {
         _hostEnvironment = hostEnvironment;
+        _kekikApiConverter = kekikApiConverter;
       
     }
 
@@ -96,5 +99,41 @@ public class MediaAppService : WebtopAppService, IMediaAppService
         }
 
         return string.Empty;
+    }
+
+
+    public Task<PluginModel>? GetPluginAsync(string pluginName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<PluginModel>?> GetPluginsAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<MainPageResult>?> GetMainPageAsync(string pluginName, string categoryUrl, string categoryName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<SearchResult>?> SearchAsync(string pluginName, string query)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<MediaInfo>? GetMediaInfoAsync(string pluginName, string url)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<VideoLink>>? GetVideoLinksAsync(string pluginName, string url)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<VideoSource>>? GetVideoSourcesAsync(string url, string referrer)
+    {
+        throw new NotImplementedException();
     }
 }

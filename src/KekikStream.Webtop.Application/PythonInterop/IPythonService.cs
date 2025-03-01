@@ -8,7 +8,7 @@ using Volo.Abp.DependencyInjection;
 
 namespace KekikStream.PythonInterop
 {
-    public interface IPythonService: ISingletonDependency
+    public interface IPythonService : ISingletonDependency
     {
     }
 }
