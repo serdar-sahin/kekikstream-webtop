@@ -1,0 +1,87 @@
+﻿@using KekikStream.Webtop.Localization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<WebtopResource> L
+@inject IJSRuntime js
+
+<ModalHeader>
+    <ModalTitle>test</ModalTitle>
+    <CloseButton />
+</ModalHeader>
+<ModalBody>
+  <Container>
+    <Row>
+        <!-- Sol Taraf - Poster -->
+        <Column md="4">
+            <Card>
+                <CardImage src="https://via.placeholder.com/300x450" alt="Film Poster" />
+            </Card>
+        </Column>
+
+        <!-- Sağ Taraf - Başlık ve Diğer Bilgiler -->
+        <Column md="8">
+            <Card>
+                <CardHeader>
+                    <h3 class="m-0">Dizi/Film Başlığı</h3>
+                </CardHeader>
+
+                <CardBody>
+                    <!-- Film Başlık, Açıklama, Rating, Yıl -->
+                    <div>
+                        <h5>Başlık:</h5>
+                        <p>Dizi/Film Başlığı</p>
+                    </div>
+
+                    <div>
+                        <h5>Açıklama:</h5>
+                        <p>Dizi veya filmin kısa açıklaması burada yer alacak.</p>
+                    </div>
+
+                    <div>
+                        <h5>Değerlendirme:</h5>
+                        <p><strong>IMDb Puanı:</strong> 8.5/10</p>
+                    </div>
+
+                    <div>
+                        <h5>Yıl:</h5>
+                        <p>2023</p>
+                    </div>
+
+                    <!-- Video İzleme Bölümü -->
+                    <div class="my-4">
+                        <iframe width="100%" height="400" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </CardBody>
+
+                <CardFooter>
+                    <!-- Sezon ve Bölüm Bilgisi -->
+                    <h5>Sezonlar ve Bölümler:</h5>
+                    <ul>
+                        <li>Sezon 1 - Bölüm 1</li>
+                        <li>Sezon 1 - Bölüm 2</li>
+                        <li>Sezon 2 - Bölüm 1</li>
+                    </ul>
+                </CardFooter>
+            </Card>
+        </Column>
+    </Row>
+</Container>
+</ModalBody>
+<ModalFooter>
+    <Button Color="Color.Secondary" Clicked="() => CancelAsync()">@L["Close"]</Button>
+    @* <Button Color="Color.Primary" Clicked="() => SaveAsync()">@L["Save"]</Button> *@
+</ModalFooter>
+
+@code
+{
+    [Inject] public IModalService ModelInfoComponentService { get; set; }
+
+    private async Task SaveAsync()
+    {
+        await ModelInfoComponentService.Hide();
+    }
+
+    private async Task CancelAsync()
+    {
+        await ModelInfoComponentService.Hide();
+    }
+}

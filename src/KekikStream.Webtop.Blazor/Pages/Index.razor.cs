@@ -71,7 +71,7 @@ public partial class Index
 
         if (plugin != null)
         {
-            if (plugin.MainPage != null)
+            if (plugin.MainPage != null && plugin.MainPage.Count > 0)
             {
                 var firstPage = plugin.MainPage[0];
                 pageName = firstPage.Title;
@@ -105,6 +105,7 @@ public partial class Index
         pageName = "";
         currentCategoryName = "";
         currentCategoryUrl = "";
+        currentPageNumber = 1;
 
         if (plugin != null)
         {
@@ -144,6 +145,17 @@ public partial class Index
             return;
         }
 
+        int pageNumber = 1;
+
+        if (direction == "Next")
+        {
+            pageNumber = currentPageNumber+1;
+        }
+        else
+        {
+            pageNumber =  currentPageNumber-1;
+        }
+
         isBusy = true;
         pages = null;
         searchResults = null;
@@ -152,7 +164,7 @@ public partial class Index
         if (plugin != null)
         {
             pageName = currentCategoryName;
-            pages = await mediaService.GetMainPageAsync(plugin.Name, currentPageNumber, currentCategoryUrl, currentCategoryName);
+            pages = await mediaService.GetMainPageAsync(plugin.Name, pageNumber, currentCategoryUrl, currentCategoryName);
 
             if (pages != null)
             {
@@ -167,7 +179,7 @@ public partial class Index
                     currentPageNumber--;
                 }
 
-                if(currentPageNumber <= 0)
+                if(currentPageNumber <= 1)
                 {
                     currentPageNumber = 1;
                 }

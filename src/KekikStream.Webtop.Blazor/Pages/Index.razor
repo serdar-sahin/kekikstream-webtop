@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using KekikStream.Webtop.Blazor.Components
 @using KekikStream.Webtop.Medias
 @using Volo.Abp.AspNetCore.Components.Web
 @inherits WebtopComponentBase
@@ -8,11 +9,11 @@
 <style>
     .card-poster-container {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 4 kartı en az 200px genişlikte yapacak şekilde ayarladık */
-        gap: 20px; /* Kartlar arasında boşluk */
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+        gap: 20px; 
         padding: 20px;
         width: 100%;
-        max-width: 1200px; /* Maksimum genişlik */
+        max-width: 1200px;
     }
 
     .card-poster {
@@ -24,7 +25,7 @@
     }
 
         .card-poster:hover {
-            transform: translateY(-10px); /* Hover efekti */
+            transform: translateY(-10px);
         }
 
         .card-poster img {
@@ -235,3 +236,45 @@
          </div>
     </div>
 </LoadingIndicator>
+
+<ModalProvider />
+
+@code
+{
+    [Inject] public IModalService ModalService { get; set; }
+
+    public async Task ShowMediaInfoComponentModal(MediaInfo mediaInfo)
+    {
+        await ModalService.Show<MediaInfosComponent>(x =>
+        {
+            x.Add(x => x.mediaInfo, mediaInfo);
+        }, new ModalInstanceOptions() { UseModalStructure = false, Size = ModalSize.Large });
+    }
+
+    
+
+    private async Task OnModalSave(bool e)
+    {
+        if (e)
+        {
+            await Notify.Success(L["SuccessMessage"]);
+        }
+    }
+
+    private Task OnModalClosing(ModalClosingEventArgs e)
+    {
+        if (e.CloseReason != CloseReason.UserClosing)
+        {
+            e.Cancel = true;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private async Task SendToDevice(string command, DateTime dateTime)
+    {
+        await Notify.Info(command + ": " + dateTime.ToString());
+        //await Notify.Success(command + ": " + dateTime.ToString(), L["SuccessMessage"]);
+    }
+}
+

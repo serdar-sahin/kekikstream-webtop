@@ -14,6 +14,7 @@ using System.Web;
 using System.Collections;
 using KekikStream.Webtop.Converters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using LiteDB;
 
 namespace KekikStream.Webtop.Medias;
 
@@ -142,6 +143,7 @@ public class MediaAppService : WebtopAppService, IMediaAppService
     public async Task<List<MainPageResult>?> GetMainPageAsync(string pluginName, int page, string categoryUrl, string categoryName)
     {
         string url = $"http://localhost:3310/api/v1/get_main_page?plugin={pluginName}&page={page}&encoded_url={categoryUrl}&encoded_category={categoryName}";
+        //Debug.WriteLine(url);
         string json = await HttpGet(url);
         return await _kekikApiConverter.ConvertMainPageResult(pluginName, json);
     }
@@ -153,17 +155,19 @@ public class MediaAppService : WebtopAppService, IMediaAppService
         return await _kekikApiConverter.ConvertSearchResult(pluginName, json);
     }
 
-    public Task<MediaInfo>? GetMediaInfoAsync(string pluginName, string url)
+    public async Task<MediaInfo?> GetMediaInfoAsync(string pluginName, string mediaUrl)
+    {
+        string url = $"http://localhost:3310/api/v1/load_item?plugin={pluginName}&encoded_url={mediaUrl}";
+        string json = await HttpGet(url);
+        return await _kekikApiConverter.ConvertMediaInfo(json);
+    }
+
+    public Task<List<VideoLink>?> GetVideoLinksAsync(string pluginName, string url)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<VideoLink>>? GetVideoLinksAsync(string pluginName, string url)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<VideoSource>>? GetVideoSourcesAsync(string url, string referrer)
+    public Task<List<VideoSource>?> GetVideoSourcesAsync(string url, string referrer)
     {
         throw new NotImplementedException();
     }

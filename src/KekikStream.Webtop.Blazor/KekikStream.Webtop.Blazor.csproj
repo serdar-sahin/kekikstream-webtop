@@ -73,7 +73,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\MediaInfo\" />
     <Folder Include="wwwroot\plugins\" />
   </ItemGroup>
 

@@ -148,6 +148,7 @@ namespace KekikStream.Webtop.Converters
         {
             try
             {
+                Debug.WriteLine(json);
                 //JObject? result = JObject.Parse(json);
                 JObject? result = await JObject.LoadAsync(new JsonTextReader(new StringReader(json)));
 
@@ -164,10 +165,15 @@ namespace KekikStream.Webtop.Converters
                         var page = new MainPageResult()
                         {
                             PluginName = pluginName,
-                            Title = WebUtility.HtmlDecode(item["title"].ToString()),
-                            Url = WebUtility.HtmlDecode(item["url"].ToString()),
-                            Category = WebUtility.HtmlDecode(item["category"].ToString()),
-                            Poster = WebUtility.HtmlDecode(item["poster"].ToString()),
+                            Title = item["title"].ToString(),
+                            Url = item["url"].ToString(),
+                            Category = item["category"].ToString(),
+                            Poster = item["poster"].ToString(),
+
+                            //Title = WebUtility.HtmlDecode(item["title"].ToString()),
+                            //Url = WebUtility.HtmlDecode(item["url"].ToString()),
+                            //Category = WebUtility.HtmlDecode(item["category"].ToString()),
+                            //Poster = WebUtility.HtmlDecode(item["poster"].ToString()),
                         };
 
                         mainPageResults.Add(page);
@@ -224,9 +230,9 @@ namespace KekikStream.Webtop.Converters
                         var page = new SearchResult()
                         {
                             PluginName = pluginName,
-                            Title = WebUtility.HtmlDecode(item["title"].ToString()),
-                            Url = WebUtility.HtmlDecode(item["url"].ToString()),
-                            Poster = WebUtility.HtmlDecode(item["poster"].ToString()),
+                            Title = item["title"].ToString(),
+                            Url = item["url"].ToString(),
+                            Poster = item["poster"].ToString(),
                         };
 
                         searchResults.Add(page);
@@ -257,9 +263,109 @@ namespace KekikStream.Webtop.Converters
            */
         }
 
-        public Task<MediaInfo?> ConvertMediaInfo(string json)
+        public async Task<MediaInfo?> ConvertMediaInfo(string json)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //JObject? result = JObject.Parse(json);
+                JObject? result = await JObject.LoadAsync(new JsonTextReader(new StringReader(json)));
+
+                if (result != null)
+                {
+                    //Debug.WriteLine("With: " + result["with"]);
+
+                    var mediaInfo = new MediaInfo();
+
+                    mediaInfo.Title = result["result"]["title"].ToString();
+                    mediaInfo.Description = result["result"]["description"].ToString();
+                    mediaInfo.Url = result["result"]["main_url"].ToString();
+                    mediaInfo.Poster = result["result"]["poster"].ToString();
+                    mediaInfo.Tags = result["result"]["tags"].ToString();
+                    mediaInfo.Rating = result["result"]["rating"].ToString();
+                    mediaInfo.Year = result["result"]["year"].ToString();
+                    mediaInfo.Actors = result["result"]["actors"].ToString();
+
+                    mediaInfo.Episodes = new List<Episode>();
+
+                    JArray resultArray = (JArray)result["result"]["episodes"];
+
+                    foreach (var item in resultArray)
+                    {
+                        var episode = new Episode()
+                        {
+                            Season = (int)item["season"],
+                            Title = item["title"].ToString(),
+                            Url = item["url"].ToString(),
+                            EpisodeNumber = (int)item["episode"],
+                        };
+
+                        mediaInfo.Episodes.Add(episode);
+                    }
+
+                    return mediaInfo;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log(ex.ToString());
+            }
+
+            return null;
+
+            /*
+            url = http://localhost:3310/api/v1/load_item?plugin=Dizilla&encoded_url=https://dizilla.club/dizi/american-primeval
+           {
+              "with": "https://github.com/keyiflerolsun/KekikStream",
+              "result": {
+                "url": "https%3A%2F%2Fdizilla.club%2Fdizi%2Famerican-primeval",
+                "poster": "https://images-macellan-online.cdn.ampproject.org/i/s/images.macellan.online/images/tv/backdrop/f/f/100/b47b8eep8vwo585a1162b07a5.jpg",
+                "title": "American Primeval",
+                "description": "Geçmişlerinden kaçan bir anne ve oğul, Amerikan Batı Yakası'nın özgürlük ve zalimlikle harmanlanmış sert coğrafyasında kendilerine bir aile kurarlar.",
+                "tags": "",
+                "rating": "1.5",
+                "year": "2025",
+                "actors": "Taylor Kitsch, Betty Gilpin, Dane DeHaan, Saura Lightfoot Leon, Derek Hinkey, Joe Tippett, Jai Courtney, Shawnee Pourier, Shea Whigham",
+                "episodes": [
+                  {
+                    "season": 1,
+                    "episode": 1,
+                    "title": "",
+                    "url": "https%3A%2F%2Fdizilla.club%2Famerican-primeval-1-sezon-1-bolum"
+                  },
+                  {
+                    "season": 1,
+                    "episode": 2,
+                    "title": "",
+                    "url": "https%3A%2F%2Fdizilla.club%2Famerican-primeval-1-sezon-2-bolum"
+                  },
+                  {
+                    "season": 1,
+                    "episode": 3,
+                    "title": "",
+                    "url": "https%3A%2F%2Fdizilla.club%2Famerican-primeval-1-sezon-3-bolum"
+                  },
+                  {
+                    "season": 1,
+                    "episode": 4,
+                    "title": "",
+                    "url": "https%3A%2F%2Fdizilla.club%2Famerican-primeval-1-sezon-4-bolum"
+                  },
+                  {
+                    "season": 1,
+                    "episode": 5,
+                    "title": "",
+                    "url": "https%3A%2F%2Fdizilla.club%2Famerican-primeval-1-sezon-5-bolum"
+                  },
+                  {
+                    "season": 1,
+                    "episode": 6,
+                    "title": "",
+                    "url": "https%3A%2F%2Fdizilla.club%2Famerican-primeval-1-sezon-6-bolum"
+                  }
+                ]
+              }
+            }
+           */
         }
 
         public Task<List<VideoLink>?> ConvertVideoLinks(string json)
