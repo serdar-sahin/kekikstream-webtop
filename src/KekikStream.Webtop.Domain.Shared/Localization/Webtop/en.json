@@ -14,6 +14,7 @@
 
     "WarningMessage": "Warning!",
     "ApiWarningMessage": "KekikStream / KekikStreamAPI must be installed and running on your system.",
+    "PluginWarningMessage": "You need to select a plugin.",
     "ErrorMessage": "An error occurred!",
     "SuccessMessage": "Completed successfully"
 

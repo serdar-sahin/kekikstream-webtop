@@ -14,6 +14,7 @@
 
     "WarningMessage": "Uyarı!",
     "ApiWarningMessage": "KekikStream / KekikStreamAPI sisteminizde yüklü ve çalışıyor olması gerekmektedir.",
+    "PluginWarningMessage": "Bir eklenti seçmeniz gerekmektedir.",
     "ErrorMessage": "Bir sorun oluştu!",
     "SuccessMessage": "İşlem başarılı"
 

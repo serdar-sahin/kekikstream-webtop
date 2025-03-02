@@ -206,8 +206,32 @@
                         </div>
                     </div>
                 </div>
-            }
 
-        </div>
+                @if(isPagination){
+                    <Pagination style="margin-top:10px">
+                        <PaginationItem @onclick='() => NextPages("Prev")'>
+                            <PaginationLink>
+                                <span aria-hidden="true">«</span>
+                            </PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink Page="@currentPageNumber.ToString()">
+                                @currentPageNumber
+                            </PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem @onclick='() => NextPages("Next")'>
+                            <PaginationLink>
+                                <span aria-hidden="true">»</span>
+                            </PaginationLink>
+                        </PaginationItem>
+                    </Pagination>
+                }
+            }else{
+                <Alert Color="Color.Danger" Visible>
+                    <AlertMessage>@L["WarningMessage"]</AlertMessage>
+                    <AlertDescription>@L["PluginWarningMessage"]</AlertDescription>
+                </Alert>
+            }
+         </div>
     </div>
 </LoadingIndicator>
