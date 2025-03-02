@@ -49,7 +49,7 @@ namespace KekikStream.Webtop.Converters
         /// <see cref="SearchResult"/> 
         /// </returns>
         /// <param name="json"></param>
-        Task<List<SearchResult>?> ConvertSearchResult(string json);
+        Task<List<SearchResult>?> ConvertSearchResult(string pluginName, string json);
 
         /// <summary>
         /// Convert KekikStreamAPI movie_item model to <see cref="MediaInfo"/> 

@@ -29,6 +29,17 @@ namespace KekikStream.Webtop.Medias
         public string? Poster { get; set; } = null;
     }
 
+    /// <summary>
+    /// map mainpage and search results
+    /// </summary>
+    public class MediaResult
+    {
+        public string PluginName { get; set; }
+        public string Title { get; set; }
+        public string Url { get; set; }
+        public string? Poster { get; set; } = null;
+    }
+
 
     /// <summary>
     /// movie,series media info

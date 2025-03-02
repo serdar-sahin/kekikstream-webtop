@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using System.Web;
 using System.Collections;
 using KekikStream.Webtop.Converters;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace KekikStream.Webtop.Medias;
 
@@ -145,9 +146,11 @@ public class MediaAppService : WebtopAppService, IMediaAppService
         return await _kekikApiConverter.ConvertMainPageResult(pluginName, json);
     }
 
-    public Task<List<SearchResult>?> SearchAsync(string pluginName, string query)
+    public async Task<List<SearchResult>?> SearchAsync(string pluginName, string query)
     {
-        throw new NotImplementedException();
+        string url = $"http://localhost:3310/api/v1/search?plugin={pluginName}&query={query}";
+        string json = await HttpGet(url);
+        return await _kekikApiConverter.ConvertSearchResult(pluginName, json);
     }
 
     public Task<MediaInfo>? GetMediaInfoAsync(string pluginName, string url)

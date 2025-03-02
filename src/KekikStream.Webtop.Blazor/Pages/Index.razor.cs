@@ -1,5 +1,7 @@
 ﻿using KekikStream.Webtop.Extensions;
 using KekikStream.Webtop.Medias;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.JSInterop;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -13,6 +15,9 @@ public partial class Index
 
     private List<MainPageResult>? pages;
     private string? pageName;
+
+    private List<SearchResult>? searchResults;
+    private string? query;
 
     private bool isBusy = false;
     private bool isWarning = false;
@@ -52,14 +57,30 @@ public partial class Index
     {
         isBusy = true;
         pages = null;
+        searchResults = null;
+        pageName = "";
 
         plugin = await mediaService.GetPluginAsync(name);
 
-        if (plugin is null)
+        if (plugin != null)
         {
-            ShowInfo(false);
+            if (plugin.MainPage != null)
+            {
+                var firstPage = plugin.MainPage[0];
+                pageName = firstPage.Title;
+                pages = await mediaService.GetMainPageAsync(plugin.Name, 1, firstPage.Url, firstPage.Title);
+                searchResults=  ObjectMapper.Map(pages, searchResults);
+                //Debug.WriteLine("results: " + searchResults?.ToJson());
+            }
+            
             //Debug.WriteLine("Plugin: " + plugin.ToJson());
         }
+        else
+        {
+            ShowInfo(false);
+        }
+
+        await js.InvokeVoidAsync("backToTop");
         isBusy = false;
     }
 
@@ -67,18 +88,54 @@ public partial class Index
     {
         isBusy = true;
         pages = null;
+        searchResults = null;
+        pageName = "";
 
-        if(plugin != null)
+        if (plugin != null)
         {
             pageName = name;
             pages = await mediaService.GetMainPageAsync(plugin.Name, 1, url, name);
 
-            if (pages is null)
+            if (pages != null)
+            {
+                searchResults = ObjectMapper.Map(pages, searchResults);
+                //Debug.WriteLine("results: " + searchResults?.ToJson());
+            }
+            else
             {
                 ShowInfo(false);
                 //Debug.WriteLine("Pages: " + pages.ToJson());
             }
         }
+
+        await js.InvokeVoidAsync("backToTop");
+        isBusy = false;
+    }
+
+    private async Task Search()
+    {
+        isBusy = true;
+        pages = null;
+        searchResults = null;
+        pageName = L["SearchResults"];
+
+        if (plugin != null && query != null)
+        {
+            pageName = L["SearchResults"] + ": " + query;
+            searchResults = await mediaService.SearchAsync(plugin.Name, query);
+
+            if (searchResults != null)
+            {
+                
+            }
+            else
+            {
+                ShowInfo(false);
+                //Debug.WriteLine("Pages: " + pages.ToJson());
+            }
+        }
+
+        query = null;
         isBusy = false;
     }
 

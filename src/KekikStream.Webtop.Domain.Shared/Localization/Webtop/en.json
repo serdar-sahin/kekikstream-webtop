@@ -5,6 +5,9 @@
     "Menu:Home": "Home",
     "Welcome": "Welcome",
     "LongWelcomeMessage": "Welcome to the application.",
+    "Search": "Search",
+    "SearchMedia": "Search for Movies or TV Series",
+    "SearchResults": "Search Results",
 
     "Plugin": "Plugin",
     "Plugins": "Plugins",

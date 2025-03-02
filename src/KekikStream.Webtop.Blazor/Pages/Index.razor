@@ -3,6 +3,7 @@
 @using Volo.Abp.AspNetCore.Components.Web
 @inherits WebtopComponentBase
 @inject IMediaAppService mediaService
+@inject IJSRuntime js
 
 <style>
     .card-poster-container {
@@ -106,7 +107,6 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title text-body"><img src="@plugin.GetIcon()" class="me-2" style="width: 24px;" /> @plugin.Name</div>
-                            <Small> @pageName</Small>
                         </div>
                         <div class="card-body pt-0">
                             <div>
@@ -149,22 +149,41 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title text-body"><img src="@plugin.GetIcon()" class="me-2" style="width: 24px;" /> @plugin.Name | <small>@plugin.Description</small></div>
+
+                        @* <Buttons Role="ButtonsRole.Toolbar">
+                            @foreach (var item in plugin.MainPage)
+                            {
+
+                                @if (item.Title == pageName)
+                                {
+                                    <Button Margin="Margin.Is1.OnX" Color="Color.Success" Size="Size.Small" Clicked='() => GetPages(item.Url, item.Title)'>@item.Title</Button>
+                                }
+                                else
+                                {
+                                    <Button Margin="Margin.Is1.OnX" Color="Color.Secondary" Size="Size.Small" Clicked='() => GetPages(item.Url, item.Title)'>@item.Title</Button>
+                                }
+                            }
+                        </Buttons> *@
+
                         <Buttons Margin="Margin.Is1.OnX" class="col-12">
                             <Addons Size="Size.Small">
                                 <Addon AddonType="AddonType.Body">
-                                    <TextEdit @bind-Text="@plugin.Name" />
+                                    <TextEdit @bind-Text="@query" Placeholder="@L["SearchMedia"]" />
                                 </Addon>
                                 <Addon AddonType="AddonType.End">
-                                    <Button Color="Color.Secondary">@L["Search"]</Button>
+                                    <Button Color="Color.Secondary" Clicked="() => Search()">@L["Search"]</Button>
                                 </Addon>
                             </Addons>
                         </Buttons>
                     </div>
+                    <div class="card-header">
+                        <div class="card-title text-body" style="text-align:center">@pageName</div>
+                    </div>
                     <div class="card-body d-flex">
                         <div class="card-poster-container">
-                            @if (pages != null)
+                            @if (searchResults != null)
                             {
-                                @foreach (var item in pages)
+                                @foreach (var item in searchResults)
                                 {
 
                                     <div class="card-poster">

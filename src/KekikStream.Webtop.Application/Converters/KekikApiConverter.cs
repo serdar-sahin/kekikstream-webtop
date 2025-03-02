@@ -85,7 +85,7 @@ namespace KekikStream.Webtop.Converters
 
                 if(result != null)
                 {
-                    Debug.WriteLine("With: " + result["with"]);
+                    //Debug.WriteLine("With: " + result["with"]);
 
                     var pluginModel = new PluginModel();
 
@@ -204,9 +204,57 @@ namespace KekikStream.Webtop.Converters
             */
         }
 
-        public Task<List<SearchResult>?> ConvertSearchResult(string json)
+        public async Task<List<SearchResult>?> ConvertSearchResult(string pluginName, string json)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //JObject? result = JObject.Parse(json);
+                JObject? result = await JObject.LoadAsync(new JsonTextReader(new StringReader(json)));
+
+                if (result != null)
+                {
+                    //Debug.WriteLine("With: " + result["with"]);
+
+                    var searchResults = new List<SearchResult>();
+
+                    JArray resultArray = (JArray)result["result"];
+
+                    foreach (var item in resultArray)
+                    {
+                        var page = new SearchResult()
+                        {
+                            PluginName = pluginName,
+                            Title = WebUtility.HtmlDecode(item["title"].ToString()),
+                            Url = WebUtility.HtmlDecode(item["url"].ToString()),
+                            Poster = WebUtility.HtmlDecode(item["poster"].ToString()),
+                        };
+
+                        searchResults.Add(page);
+                    }
+
+                    return searchResults;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log(ex.ToString());
+            }
+
+            return null;
+
+            /*
+            url = http://localhost:3310/api/v1/search?plugin=Dizilla&query=silo
+           {
+              "with": "https://github.com/keyiflerolsun/KekikStream",
+              "result": [
+                {
+                  "title": "Silo",
+                  "url": "https%3A%2F%2Fdizilla.club%2Fdizi%2Fsilo",
+                  "poster": "https://file.macellan.online/images/f/f/100//silo--1685249685.jpg"
+                }
+              ]
+            }
+           */
         }
 
         public Task<MediaInfo?> ConvertMediaInfo(string json)
