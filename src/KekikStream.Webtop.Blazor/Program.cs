@@ -70,12 +70,12 @@ public class Program
                         new[] { "application/octet-stream" });
                 });
 
-                services.AddApplication<WebtopBlazorModule>(options =>
-                {
-                    options.PlugInSources.AddFolder(Path.Combine(environment.ContentRootPath, "wwwroot", "plugins"), SearchOption.AllDirectories);
-                });
+                //services.AddApplication<WebtopBlazorModule>(options =>
+                //{
+                //    options.PlugInSources.AddFolder(Path.Combine(environment.ContentRootPath, "wwwroot", "plugins"), SearchOption.AllDirectories);
+                //});
 
-                //services.AddApplication<WebtopBlazorModule>();
+                services.AddApplication<WebtopBlazorModule>();
 
             });
 

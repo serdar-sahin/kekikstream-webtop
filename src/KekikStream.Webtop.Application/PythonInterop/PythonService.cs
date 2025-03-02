@@ -25,6 +25,8 @@ namespace KekikStream.PythonInterop
         public PythonService() 
         {
             //var result = CheckLocalPython();
+
+            // PS C:\Users\serdar_dell\AppData\Roaming\Python\Python312\site-packages\KekikStreamAPI> python __init__.py
         }
 
         /// <summary>

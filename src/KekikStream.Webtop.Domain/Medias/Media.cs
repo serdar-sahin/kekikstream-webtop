@@ -115,18 +115,26 @@ namespace KekikStream.Webtop.Medias
         public string Url { get; set; }
         public string Icon { get; set; }
         public string Language { get; set; }
-        public List<GenericTitleItem> MainPage { get; set; }
+        public List<GenericTitleUrlItem> MainPage { get; set; }
 
         //public List<Dictionary<string, string>> MainPage { get; set; }
 
         public string GetIcon()
         {
             // http://www.google.com/s2/favicons?domain=stackoverflow.com
-            Uri myUri = new Uri(Url);
-            string host = myUri.Host;
-            host = host.Replace("www.", "");
-            Icon = $"http://www.google.com/s2/favicons?domain={host}";
-            return Icon;
+            try
+            {
+                Uri myUri = new Uri(Url);
+                string host = myUri.Host;
+                host = host.Replace("www.", "");
+                Icon = $"http://www.google.com/s2/favicons?domain={host}";
+                return Icon;
+            }
+            catch 
+            {
+                return "./images/x_icon.png";
+            }
+            
         }
        
     }
@@ -157,9 +165,9 @@ namespace KekikStream.Webtop.Medias
         public string Item { get; set; }
     }
 
-    public class GenericTitleItem
+    public class GenericTitleUrlItem
     {
         public string Title { get; set; }
-        public string Item { get; set; }
+        public string Url { get; set; }
     }
 }

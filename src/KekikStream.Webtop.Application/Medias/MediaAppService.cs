@@ -102,19 +102,47 @@ public class MediaAppService : WebtopAppService, IMediaAppService
     }
 
 
-    public Task<PluginModel>? GetPluginAsync(string pluginName)
+    public async Task<List<PluginModel>?> GetPluginNamesAsync()
     {
-        throw new NotImplementedException();
+        string url = "http://localhost:3310/api/v1/get_plugin_names"; 
+        string json = await HttpGet(url);
+        return await _kekikApiConverter.ConvertPluginsModel(json);
     }
 
-    public Task<List<PluginModel>?> GetPluginsAsync()
+    public async Task<List<PluginModel>?> GetPluginsAsync()
     {
-        throw new NotImplementedException();
+        var plugins = new List<PluginModel>();
+        var pluginNames = await GetPluginNamesAsync();
+
+        if (pluginNames != null)
+        {
+            foreach (var pluginName in pluginNames)
+            {
+                string url = $"http://localhost:3310/api/v1/get_plugin?plugin={pluginName}";
+                string json = await HttpGet(url);
+                var plugin = await _kekikApiConverter.ConvertPluginModel(json);
+
+                if (plugin != null) plugins.Add(plugin);
+            }
+
+            return plugins;
+        }
+
+        return null;
     }
 
-    public Task<List<MainPageResult>?> GetMainPageAsync(string pluginName, string categoryUrl, string categoryName)
+    public async Task<PluginModel?> GetPluginAsync(string pluginName)
     {
-        throw new NotImplementedException();
+        string url = $"http://localhost:3310/api/v1/get_plugin?plugin={pluginName}";
+        string json = await HttpGet(url);
+        return await _kekikApiConverter.ConvertPluginModel(json);
+    }
+
+    public async Task<List<MainPageResult>?> GetMainPageAsync(string pluginName, int page, string categoryUrl, string categoryName)
+    {
+        string url = $"http://localhost:3310/api/v1/get_main_page?plugin={pluginName}&page={page}&encoded_url={categoryUrl}&encoded_category={categoryName}";
+        string json = await HttpGet(url);
+        return await _kekikApiConverter.ConvertMainPageResult(pluginName, json);
     }
 
     public Task<List<SearchResult>?> SearchAsync(string pluginName, string query)

@@ -1,9 +1,18 @@
 ﻿{
   "Culture": "en",
   "Texts": {
-    "AppName": "Webtop",
+    "AppName": "KekikStream",
     "Menu:Home": "Home",
-    "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information visit",
-    "Welcome": "Welcome"
+    "Welcome": "Welcome",
+    "LongWelcomeMessage": "Welcome to the application.",
+
+    "Plugin": "Plugin",
+    "Plugins": "Plugins",
+
+    "WarningMessage": "Warning!",
+    "ApiWarningMessage": "KekikStream / KekikStreamAPI must be installed and running on your system.",
+    "ErrorMessage": "An error occurred!",
+    "SuccessMessage": "Completed successfully"
+
   }
 }
