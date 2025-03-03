@@ -46,16 +46,17 @@ namespace KekikStream.Webtop.Medias
     /// </summary>
     public class MediaInfo
     {
-        public string? Url { get; set; } = null;
         public string? Poster { get; set; } = null;
         public string? Title { get; set; } = null;
         public string? Description { get; set; } = null;
+        public string? Url { get; set; } = null;
+        public string Trailer { get; set; } = null;
         public string? Tags { get; set; } = null;
         public string? Rating { get; set; } = null;
         public string? Year { get; set; } = null;
         public string? Duration { get; set; } = null;
         public string? Actors { get; set; } = null;
-        public List<Episode>? Episodes { get; set; } = null;
+        public List<Season>? Seasons { get; set; } = null;
 
         public void SetTags(object value)
         {
@@ -92,15 +93,23 @@ namespace KekikStream.Webtop.Medias
         }
     }
 
+    public class Season
+    {
+        public int SeasonNumber { get; set; }
+        public List<Episode> Episodes { get; set; }
+    }
+
     /// <summary>
     /// episode info
     /// </summary>
     public class Episode
     {
-        public int? Season { get; set; } = null;
+        public int? SeasonNumber { get; set; } = null;
         public int? EpisodeNumber { get; set; } = null;
         public string Title { get; set; } = null;
+        public string Description { get; set; } = null;
         public string Url { get; set; } = null;
+        public string Trailer { get; set; } = null;
 
         public Episode CheckTitle()
         {
@@ -152,11 +161,11 @@ namespace KekikStream.Webtop.Medias
 
     public class VideoLink
     {
-        public string Name { get; set; }
-        public string Url { get; set; }
+        public bool MustExtract { get; set; }
+        public List<VideoSourceModel> VideoSources { get; set; }
     }
 
-    public class VideoSource
+    public class VideoSourceModel
     {
         public string Name { get; set; }
         public string Url { get; set; }

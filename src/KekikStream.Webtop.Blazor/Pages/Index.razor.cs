@@ -20,6 +20,8 @@ public partial class Index
     private List<SearchResult>? searchResults;
     private string? query;
 
+    private MediaInfo? mediaInfo;
+
     private bool isPagination = false;
     private int currentPageNumber = 1;
     private string currentCategoryName = "";
@@ -62,9 +64,12 @@ public partial class Index
     private async Task SetPlugin(string name)
     {
         isBusy = true;
+        isPagination = false;
         pages = null;
         searchResults = null;
         pageName = "";
+        currentCategoryName = "";
+        currentCategoryUrl = "";
         currentPageNumber = 1;
 
         plugin = await mediaService.GetPluginAsync(name);
@@ -79,17 +84,18 @@ public partial class Index
                 currentCategoryUrl = firstPage.Url;
 
                 pages = await mediaService.GetMainPageAsync(plugin.Name, 1, firstPage.Url, firstPage.Title);
-                searchResults=  ObjectMapper.Map(pages, searchResults);
-                //Debug.WriteLine("results: " + searchResults?.ToJson());
 
-                isPagination = true;
+                if (pages != null && pages.Count > 0)
+                {
+                    searchResults = ObjectMapper.Map(pages, searchResults);
+                    isPagination = true;
+                }
             }
             
             //Debug.WriteLine("Plugin: " + plugin.ToJson());
         }
         else
         {
-            isPagination = false;
             ShowInfo(false);
         }
 
@@ -100,6 +106,7 @@ public partial class Index
     private async Task GetPages(string url, string name)
     {
         isBusy = true;
+        isPagination = false;
         pages = null;
         searchResults = null;
         pageName = "";
@@ -112,7 +119,7 @@ public partial class Index
             pageName = name;
             pages = await mediaService.GetMainPageAsync(plugin.Name, 1, url, name);
 
-            if (pages != null)
+            if (pages != null && pages.Count > 0)
             {
                 currentCategoryName = name;
                 currentCategoryUrl = url;
@@ -123,7 +130,6 @@ public partial class Index
             }
             else
             {
-                isPagination = false;
                 ShowInfo(false);
                 //Debug.WriteLine("Pages: " + pages.ToJson());
             }
@@ -166,7 +172,7 @@ public partial class Index
             pageName = currentCategoryName;
             pages = await mediaService.GetMainPageAsync(plugin.Name, pageNumber, currentCategoryUrl, currentCategoryName);
 
-            if (pages != null)
+            if (pages != null && pages.Count > 0)
             {
                 searchResults = ObjectMapper.Map(pages, searchResults);
 
@@ -224,6 +230,29 @@ public partial class Index
         }
 
         query = null;
+        isBusy = false;
+    }
+
+    private async Task GetMediaInfo(SearchResult searchResult)
+    {
+        isBusy = true;
+
+        if (plugin != null)
+        {
+            mediaInfo = await mediaService.GetMediaInfoAsync(plugin.Name, searchResult.Url);
+
+            if (mediaInfo != null)
+            {
+                ShowInfo(true);
+                await ShowMediaInfosComponentModal(mediaInfo);
+            }
+            else
+            {
+                ShowInfo(false);
+                //Debug.WriteLine("Pages: " + pages.ToJson());
+            }
+        }
+
         isBusy = false;
     }
 

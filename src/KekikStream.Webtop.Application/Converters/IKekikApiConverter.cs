@@ -67,7 +67,7 @@ namespace KekikStream.Webtop.Converters
         /// <see cref="VideoLink"/> 
         /// </returns>
         /// <param name="json"></param>
-        Task<List<VideoLink>?> ConvertVideoLinks(string json);
+        Task<VideoLink?> ConvertVideoLinks(string json);
 
         /// <summary>
         /// Convert KekikStreamAPI extract_url model to <see cref="VideoSource"/> 
@@ -76,6 +76,6 @@ namespace KekikStream.Webtop.Converters
         /// <see cref="VideoSource"/> 
         /// </returns>
         /// <param name="json"></param>
-        Task<List<VideoSource>?> ConvertVideoSources(string json);
+        Task<List<VideoSourceModel>?> ConvertVideoSources(string json);
     }
 }

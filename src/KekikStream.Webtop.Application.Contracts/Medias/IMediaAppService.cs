@@ -12,6 +12,6 @@ public interface IMediaAppService : IApplicationService
     Task<List<MainPageResult>?> GetMainPageAsync(string pluginName, int page, string categoryUrl, string categoryName);
     Task<List<SearchResult>?> SearchAsync(string pluginName, string query);
     Task<MediaInfo?> GetMediaInfoAsync(string pluginName, string url);
-    Task<List<VideoLink>?> GetVideoLinksAsync(string pluginName, string url);
-    Task<List<VideoSource>?> GetVideoSourcesAsync(string url, string referrer);
+    Task<VideoLink?> GetVideoLinksAsync(string pluginName, string url);
+    Task<List<VideoSourceModel>?> GetVideoSourcesAsync(string url, string referrer);
 }

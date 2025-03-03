@@ -11,6 +11,11 @@
 
     "Plugin": "Eklenti",
     "Plugins": "Eklentiler",
+    "Year": "Yıl",
+    "Tags": "Tür",
+    "Actors": "Oyuncular",
+    "Season": "Sezon",
+    "Episode": "Bölüm",
 
     "WarningMessage": "Uyarı!",
     "ApiWarningMessage": "KekikStream / KekikStreamAPI sisteminizde yüklü ve çalışıyor olması gerekmektedir.",

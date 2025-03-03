@@ -1,4 +1,5 @@
-﻿using KekikStream.Webtop.Medias;
+﻿using KekikStream.Webtop.Extensions;
+using KekikStream.Webtop.Medias;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -160,23 +161,26 @@ namespace KekikStream.Webtop.Converters
 
                     JArray resultArray = (JArray)result["result"];
 
-                    foreach (var item in resultArray)
+                    if(resultArray != null)
                     {
-                        var page = new MainPageResult()
+                        foreach (var item in resultArray)
                         {
-                            PluginName = pluginName,
-                            Title = item["title"].ToString(),
-                            Url = item["url"].ToString(),
-                            Category = item["category"].ToString(),
-                            Poster = item["poster"].ToString(),
+                            var page = new MainPageResult()
+                            {
+                                PluginName = pluginName,
+                                Title = item["title"].ToString(),
+                                Url = WebUtility.UrlDecode(item["url"].ToString()),
+                                Category = item["category"].ToString(),
+                                Poster = item["poster"].ToString(),
 
-                            //Title = WebUtility.HtmlDecode(item["title"].ToString()),
-                            //Url = WebUtility.HtmlDecode(item["url"].ToString()),
-                            //Category = WebUtility.HtmlDecode(item["category"].ToString()),
-                            //Poster = WebUtility.HtmlDecode(item["poster"].ToString()),
-                        };
+                                //Title = WebUtility.HtmlDecode(item["title"].ToString()),
+                                //Url = WebUtility.HtmlDecode(item["url"].ToString()),
+                                //Category = WebUtility.HtmlDecode(item["category"].ToString()),
+                                //Poster = WebUtility.HtmlDecode(item["poster"].ToString()),
+                            };
 
-                        mainPageResults.Add(page);
+                            mainPageResults.Add(page);
+                        }
                     }
 
                     return mainPageResults;
@@ -231,7 +235,7 @@ namespace KekikStream.Webtop.Converters
                         {
                             PluginName = pluginName,
                             Title = item["title"].ToString(),
-                            Url = item["url"].ToString(),
+                            Url = WebUtility.UrlDecode(item["url"].ToString()),
                             Poster = item["poster"].ToString(),
                         };
 
@@ -267,41 +271,67 @@ namespace KekikStream.Webtop.Converters
         {
             try
             {
+                //Debug.WriteLine("MediaInfo: " + json);
                 //JObject? result = JObject.Parse(json);
                 JObject? result = await JObject.LoadAsync(new JsonTextReader(new StringReader(json)));
 
                 if (result != null)
                 {
-                    //Debug.WriteLine("With: " + result["with"]);
-
                     var mediaInfo = new MediaInfo();
 
                     mediaInfo.Title = result["result"]["title"].ToString();
                     mediaInfo.Description = result["result"]["description"].ToString();
-                    mediaInfo.Url = result["result"]["main_url"].ToString();
+                    mediaInfo.Url = WebUtility.UrlDecode(result["result"]["url"].ToString());
                     mediaInfo.Poster = result["result"]["poster"].ToString();
                     mediaInfo.Tags = result["result"]["tags"].ToString();
                     mediaInfo.Rating = result["result"]["rating"].ToString();
                     mediaInfo.Year = result["result"]["year"].ToString();
                     mediaInfo.Actors = result["result"]["actors"].ToString();
 
-                    mediaInfo.Episodes = new List<Episode>();
+                    mediaInfo.Seasons = new List<Season>();
 
-                    JArray resultArray = (JArray)result["result"]["episodes"];
+                    JArray episodesArray = (JArray)result["result"]["episodes"];
 
-                    foreach (var item in resultArray)
+                    // maybe tv series
+                    if(episodesArray != null)
                     {
-                        var episode = new Episode()
-                        {
-                            Season = (int)item["season"],
-                            Title = item["title"].ToString(),
-                            Url = item["url"].ToString(),
-                            EpisodeNumber = (int)item["episode"],
-                        };
+                        var groupedBySeason = episodesArray
+                            .GroupBy(episode => (int)episode["season"])
+                            .Select(group => new
+                            {
+                                Season = group.Key,
+                                Episodes = group.OrderBy(e => (int)e["episode"]).ToList()
+                            });
 
-                        mediaInfo.Episodes.Add(episode);
+                        foreach (var group in groupedBySeason)
+                        {
+                            //Debug.WriteLine($"Season {group.Season}:");
+
+                            var seasonModel = new Season()
+                            {
+                                SeasonNumber = group.Season,
+                                Episodes = new List<Episode>()
+                            };
+                            
+                            foreach (var episode in group.Episodes)
+                            {
+                                //Debug.WriteLine($"  Episode {episode["episode"]}: {episode["title"]} - {WebUtility.UrlDecode(episode["url"].ToString())}");
+
+                                var episodeModel = new Episode()
+                                {
+                                    EpisodeNumber = (int)episode["episode"],
+                                    Title = episode["title"].ToString(),
+                                    Url = WebUtility.UrlDecode(episode["url"].ToString())
+                                };
+
+                                seasonModel.Episodes.Add(episodeModel);
+                            }
+                            
+                            mediaInfo.Seasons.Add(seasonModel);
+                        }
                     }
 
+                    //Debug.WriteLine(mediaInfo.ToJson());
                     return mediaInfo;
                 }
             }
@@ -368,12 +398,102 @@ namespace KekikStream.Webtop.Converters
            */
         }
 
-        public Task<List<VideoLink>?> ConvertVideoLinks(string json)
+        public async Task<VideoLink?> ConvertVideoLinks(string json)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //Debug.WriteLine("VideoLinks: " + json);
+                JObject? result = await JObject.LoadAsync(new JsonTextReader(new StringReader(json)));
+
+                if (result != null)
+                {
+                    //Debug.WriteLine("With: " + result["with"]);
+
+                    var videoLink = new VideoLink();
+
+                    videoLink.MustExtract = (bool)result["must_extract"];
+                    videoLink.VideoSources = new List<VideoSourceModel>();
+
+                    JArray videoSourceArray = (JArray)result["result"];
+
+                    foreach (var item in videoSourceArray)
+                    {
+                        var videoSource = new VideoSourceModel()
+                        {
+                            Name = item["name"].ToString(),
+                            Referer = item["referer"].ToString(),
+                            Url = WebUtility.UrlDecode(item["url"].ToString()),
+                            Subtitles = new List<Subtitle>()
+                        };
+
+                        JArray subTitleArray = (JArray)item["subtitles"];
+                        foreach (var title in subTitleArray)
+                        {
+                            var subTitle = new Subtitle()
+                            {
+                                Name = title["name"].ToString(),
+                                Url = WebUtility.UrlDecode(title["url"].ToString()),
+                            };
+
+                            videoSource.Subtitles.Add(subTitle);
+                        }
+
+                            videoLink.VideoSources.Add(videoSource);
+                    }
+
+                    return videoLink;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Log(ex.ToString());
+            }
+
+            return null;
+
+            /*
+            url = http://localhost:3310/api/v1/load_links?plugin=DiziYou&encoded_url=https://www.diziyou2.com/cobra-kai-1-sezon-2-bolum/
+           {
+              "with": "https://github.com/keyiflerolsun/KekikStream",
+              "must_extract": false,
+              "result": [
+                {
+                  "name": "DiziYou | Orjinal Dil |  Cobra Kai 1. Sezon 2. Bölüm - Strike First",
+                  "url": "https://storage.diziyou2.com/episodes/21902/play.m3u8",
+                  "referer": "https://www.diziyou2.com/cobra-kai-1-sezon-2-bolum/",
+                  "subtitles": [
+                    {
+                      "name": "Türkçe Altyazılı",
+                      "url": "https://storage.diziyou2.com/subtitles/21902/tr.vtt"
+                    },
+                    {
+                      "name": "İngilizce Altyazılı",
+                      "url": "https://storage.diziyou2.com/subtitles/21902/en.vtt"
+                    }
+                  ]
+                },
+                {
+                  "name": "DiziYou | Dublaj |  Cobra Kai 1. Sezon 2. Bölüm - Strike First",
+                  "url": "https://storage.diziyou2.com/episodes/21902_tr/play.m3u8",
+                  "referer": "https://www.diziyou2.com/cobra-kai-1-sezon-2-bolum/",
+                  "subtitles": [
+                    {
+                      "name": "Türkçe Altyazılı",
+                      "url": "https://storage.diziyou2.com/subtitles/21902/tr.vtt"
+                    },
+                    {
+                      "name": "İngilizce Altyazılı",
+                      "url": "https://storage.diziyou2.com/subtitles/21902/en.vtt"
+                    }
+                  ]
+                }
+              ]
+            }
+           */
         }
 
-        public Task<List<VideoSource>?> ConvertVideoSources(string json)
+        public Task<List<VideoSourceModel>?> ConvertVideoSources(string json)
         {
             throw new NotImplementedException();
         }

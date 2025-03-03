@@ -11,6 +11,11 @@
 
     "Plugin": "Plugin",
     "Plugins": "Plugins",
+    "Year": "Year",
+    "Tags": "Tags",
+    "Actors": "Actors",
+    "Season": "Seson",
+    "Episode": "Episode",
 
     "WarningMessage": "Warning!",
     "ApiWarningMessage": "KekikStream / KekikStreamAPI must be installed and running on your system.",

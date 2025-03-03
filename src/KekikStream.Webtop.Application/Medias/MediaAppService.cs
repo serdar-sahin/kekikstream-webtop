@@ -15,6 +15,7 @@ using System.Collections;
 using KekikStream.Webtop.Converters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using LiteDB;
+using System.Net;
 
 namespace KekikStream.Webtop.Medias;
 
@@ -136,6 +137,9 @@ public class MediaAppService : WebtopAppService, IMediaAppService
     public async Task<PluginModel?> GetPluginAsync(string pluginName)
     {
         string url = $"http://localhost:3310/api/v1/get_plugin?plugin={pluginName}";
+        url = WebUtility.UrlDecode(url);
+        //Debug.WriteLine(url);
+
         string json = await HttpGet(url);
         return await _kekikApiConverter.ConvertPluginModel(json);
     }
@@ -143,7 +147,9 @@ public class MediaAppService : WebtopAppService, IMediaAppService
     public async Task<List<MainPageResult>?> GetMainPageAsync(string pluginName, int page, string categoryUrl, string categoryName)
     {
         string url = $"http://localhost:3310/api/v1/get_main_page?plugin={pluginName}&page={page}&encoded_url={categoryUrl}&encoded_category={categoryName}";
+        url = WebUtility.UrlDecode(url);
         //Debug.WriteLine(url);
+
         string json = await HttpGet(url);
         return await _kekikApiConverter.ConvertMainPageResult(pluginName, json);
     }
@@ -151,23 +157,36 @@ public class MediaAppService : WebtopAppService, IMediaAppService
     public async Task<List<SearchResult>?> SearchAsync(string pluginName, string query)
     {
         string url = $"http://localhost:3310/api/v1/search?plugin={pluginName}&query={query}";
+        url = WebUtility.UrlDecode(url);
+        //Debug.WriteLine(url);
+
         string json = await HttpGet(url);
         return await _kekikApiConverter.ConvertSearchResult(pluginName, json);
     }
 
     public async Task<MediaInfo?> GetMediaInfoAsync(string pluginName, string mediaUrl)
     {
+        mediaUrl = WebUtility.UrlDecode(mediaUrl);
+        //Debug.WriteLine(mediaUrl);
+
         string url = $"http://localhost:3310/api/v1/load_item?plugin={pluginName}&encoded_url={mediaUrl}";
         string json = await HttpGet(url);
         return await _kekikApiConverter.ConvertMediaInfo(json);
     }
 
-    public Task<List<VideoLink>?> GetVideoLinksAsync(string pluginName, string url)
+    public async Task<VideoLink?> GetVideoLinksAsync(string pluginName, string mediaUrl)
     {
-        throw new NotImplementedException();
+        mediaUrl = WebUtility.UrlDecode(mediaUrl);
+        //Debug.WriteLine(mediaUrl);
+
+        string url = $"http://localhost:3310/api/v1/load_links?plugin={pluginName}&encoded_url={mediaUrl}";
+        Debug.WriteLine(url);
+
+        string json = await HttpGet(url);
+        return await _kekikApiConverter.ConvertVideoLinks(json);
     }
 
-    public Task<List<VideoSource>?> GetVideoSourcesAsync(string url, string referrer)
+    public Task<List<VideoSourceModel>?> GetVideoSourcesAsync(string url, string referrer)
     {
         throw new NotImplementedException();
     }

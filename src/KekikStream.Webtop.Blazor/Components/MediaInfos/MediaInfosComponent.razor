@@ -1,70 +1,132 @@
 ﻿@using KekikStream.Webtop.Localization
 @using Microsoft.Extensions.Localization
+@using KekikStream.Webtop.Medias
+@inject IMediaAppService mediaService
 @inject IStringLocalizer<WebtopResource> L
 @inject IJSRuntime js
 
 <ModalHeader>
-    <ModalTitle>test</ModalTitle>
+    <ModalTitle>@plugin?.Name | @mediaInfo?.Title</ModalTitle>
     <CloseButton />
 </ModalHeader>
 <ModalBody>
-  <Container>
-    <Row>
-        <!-- Sol Taraf - Poster -->
-        <Column md="4">
-            <Card>
-                <CardImage src="https://via.placeholder.com/300x450" alt="Film Poster" />
-            </Card>
-        </Column>
+<LoadingIndicator @bind-Visible="@isBusy">
+    <Container>
+        <Row>
+            <Column>
+                <Card>
+                    <CardBody>
+                        <Row style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start;">
+                            <Column sm="4" style="flex: 0 0 200px; max-width: 200px; margin-bottom: 10px;">
+                                <img src="@mediaInfo?.Poster" class="img-fluid" style="max-width: 100%; height: auto;" />
+                            </Column>
+                            <Column style="flex: 1; margin-top: 0; margin-bottom: 10px;">
+                                <p>@mediaInfo?.Description</p>
+                                <p><strong>Imdb:</strong> @mediaInfo?.Rating | <strong>@L["Year"]:</strong> @mediaInfo?.Year |  <strong>@L["Tags"]:</strong> @mediaInfo.Tags</p>
+                                <p><strong>@L["Actors"]:</strong> @mediaInfo?.Actors</p>
+                            </Column>
+                        </Row>
 
-        <!-- Sağ Taraf - Başlık ve Diğer Bilgiler -->
-        <Column md="8">
-            <Card>
-                <CardHeader>
-                    <h3 class="m-0">Dizi/Film Başlığı</h3>
-                </CardHeader>
+                        @* <Row>
+                            <Column>
+                                <p style="text-align:center"><strong>@L["Actors"]:</strong> @mediaInfo?.Actors</p>
+                            </Column>
+                        </Row> *@
 
-                <CardBody>
-                    <!-- Film Başlık, Açıklama, Rating, Yıl -->
-                    <div>
-                        <h5>Başlık:</h5>
-                        <p>Dizi/Film Başlığı</p>
-                    </div>
+                        <Row>
+                            @if(videoLink != null && videoLink.VideoSources.Count > 0){
+                                    <Buttons>
+                                        @foreach(var source in videoLink.VideoSources){
+                                            <Button Color="Color.Secondary">@source.Name</Button>
+                                        }
+                                    </Buttons>
+                            }
+                               
+                            <Column>
+                                    @* <video width="100%" source="@videoSource" /> *@
+                                    @* <Video Source="@("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")" /> *@
+                                    <Video @ref="videoPlayer" Source="@videoUrl" Poster="@mediaInfo?.Poster" />
+                                </Column>
+                        </Row>
 
-                    <div>
-                        <h5>Açıklama:</h5>
-                        <p>Dizi veya filmin kısa açıklaması burada yer alacak.</p>
-                    </div>
+                        @if (mediaInfo?.Seasons != null & mediaInfo?.Seasons?.Count > 0)
+                        {
+                            <Tabs SelectedTab="1" Style="margin-top: 10px">
+                                <Items>
+                                    @foreach (var season in mediaInfo.Seasons)
+                                    {
+                                        <Tab Name="@season.SeasonNumber.ToString()">@L["Season"] @season.SeasonNumber</Tab>
+                                    }
+                                </Items>
+                                <Content>
+                            @foreach (var season in mediaInfo.Seasons)
+                                {
 
-                    <div>
-                        <h5>Değerlendirme:</h5>
-                        <p><strong>IMDb Puanı:</strong> 8.5/10</p>
-                    </div>
+                                    <TabPanel Name="@season.SeasonNumber.ToString()">
+                                    <ul>
+                                        @foreach (var episode in season.Episodes)
+                                        {
+                                            <li>
+                                                <Button Color="Color.Default" Size="Size.Small" Clicked='() => GetVideoLinks(episode.Url)'>
+                                                     <strong>@L["Episode"] @episode.EpisodeNumber </strong> @episode.Title
+                                                </Button>
+                                            </li>
+                                        }
+                                    </ul>
+                                    </TabPanel>
+                                }
+                                </Content>
+                        </Tabs>
+                        }
 
-                    <div>
-                        <h5>Yıl:</h5>
-                        <p>2023</p>
-                    </div>
-
-                    <!-- Video İzleme Bölümü -->
-                    <div class="my-4">
-                        <iframe width="100%" height="400" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                </CardBody>
-
-                <CardFooter>
-                    <!-- Sezon ve Bölüm Bilgisi -->
-                    <h5>Sezonlar ve Bölümler:</h5>
-                    <ul>
-                        <li>Sezon 1 - Bölüm 1</li>
-                        <li>Sezon 1 - Bölüm 2</li>
-                        <li>Sezon 2 - Bölüm 1</li>
-                    </ul>
-                </CardFooter>
-            </Card>
-        </Column>
-    </Row>
-</Container>
+                        @* <Tabs @bind-ActiveIndex="@selectedTabIndex" SelectedTab="season1" Style="margin-top: 10px">
+                            <Items>
+                                <Tab Name="season1">Sezon 1</Tab>
+                                <Tab Name="season2">Sezon 2</Tab>
+                                <Tab Name="season3">Sezon 2</Tab>
+                                <Tab Name="season4">Sezon 3</Tab>
+                            </Items>
+                            <Content>
+                                <TabPanel Name="season1">
+                                    <ul>
+                                        <li><strong>Bölüm 1:</strong> Konu</li>
+                                        <li><strong>Bölüm 2:</strong> Konu</li>
+                                        <li><strong>Bölüm 3:</strong> Konu</li>
+                                        <li><strong>Bölüm 4:</strong> Konu</li>
+                                    </ul>
+                                </TabPanel>
+                                <TabPanel Name="season2">
+                                    <ul>
+                                        <li><strong>Bölüm 1:</strong> Konu</li>
+                                        <li><strong>Bölüm 2:</strong> Konu</li>
+                                        <li><strong>Bölüm 3:</strong> Konu</li>
+                                        <li><strong>Bölüm 4:</strong> Konu</li>
+                                    </ul>
+                                </TabPanel>
+                                <TabPanel Name="season3">
+                                    <ul>
+                                        <li><strong>Bölüm 1:</strong> Konu</li>
+                                        <li><strong>Bölüm 2:</strong> Konu</li>
+                                        <li><strong>Bölüm 3:</strong> Konu</li>
+                                        <li><strong>Bölüm 4:</strong> Konu</li>
+                                    </ul>
+                                </TabPanel>
+                                <TabPanel Name="season4">
+                                    <ul>
+                                        <li><strong>Bölüm 1:</strong> Konu</li>
+                                        <li><strong>Bölüm 2:</strong> Konu</li>
+                                        <li><strong>Bölüm 3:</strong> Konu</li>
+                                        <li><strong>Bölüm 4:</strong> Konu</li>
+                                    </ul>
+                                </TabPanel>
+                            </Content>
+                        </Tabs> *@
+                    </CardBody>
+                </Card>
+            </Column>
+        </Row>
+    </Container>
+</LoadingIndicator>
 </ModalBody>
 <ModalFooter>
     <Button Color="Color.Secondary" Clicked="() => CancelAsync()">@L["Close"]</Button>
@@ -75,6 +137,8 @@
 {
     [Inject] public IModalService ModelInfoComponentService { get; set; }
 
+    private int selectedTabIndex = 0;
+
     private async Task SaveAsync()
     {
         await ModelInfoComponentService.Hide();
@@ -83,5 +147,6 @@
     private async Task CancelAsync()
     {
         await ModelInfoComponentService.Hide();
+        await videoPlayer?.Stop();
     }
 }

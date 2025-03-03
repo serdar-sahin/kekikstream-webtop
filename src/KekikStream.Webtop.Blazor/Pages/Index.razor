@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using KekikStream.Webtop.Blazor.Components
+@using KekikStream.Webtop.Blazor.Components.MediaInfos
 @using KekikStream.Webtop.Medias
 @using Volo.Abp.AspNetCore.Components.Web
 @inherits WebtopComponentBase
@@ -65,7 +65,9 @@
                 {
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title text-body">@L["Plugins"]</div>
+                            <div class="card-title text-body">
+                                <Icon Name="IconName.Video" TextColor="TextColor.Primary" Style="margin-top:8px" />
+                                @L["Plugins"]</div>
                         </div>
                         <div class="card-body pt-0">
                             <div>
@@ -188,7 +190,8 @@
                                 {
 
                                     <div class="card-poster">
-                                        <img src="@item.Poster" />
+                                        @* <a @onclick='() => GetMediaInfo(item)'><img src="@item.Poster" /></a> *@
+                                        <Image Source="@item.Poster" @onclick='() => GetMediaInfo(item)' Loading Style="cursor: pointer"/>
                                         <h3>@item.Title</h3>
                                     </div>
 
@@ -243,12 +246,13 @@
 {
     [Inject] public IModalService ModalService { get; set; }
 
-    public async Task ShowMediaInfoComponentModal(MediaInfo mediaInfo)
+    public async Task ShowMediaInfosComponentModal(MediaInfo mediaInfo)
     {
         await ModalService.Show<MediaInfosComponent>(x =>
         {
+            x.Add(x => x.plugin, plugin);
             x.Add(x => x.mediaInfo, mediaInfo);
-        }, new ModalInstanceOptions() { UseModalStructure = false, Size = ModalSize.Large });
+        }, new ModalInstanceOptions() { UseModalStructure = false, Size = ModalSize.ExtraLarge });
     }
 
     
