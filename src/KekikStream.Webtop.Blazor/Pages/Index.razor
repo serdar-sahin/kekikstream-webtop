@@ -231,10 +231,12 @@
                     </Pagination>
                 }
             }else{
-                <Alert Color="Color.Danger" Visible>
-                    <AlertMessage>@L["WarningMessage"]</AlertMessage>
-                    <AlertDescription>@L["PluginWarningMessage"]</AlertDescription>
-                </Alert>
+                if(!isWarning){
+                    <Alert Color="Color.Warning" Visible>
+                        <AlertMessage>@L["WarningMessage"]</AlertMessage>
+                        <AlertDescription>@L["PluginWarningMessage"]</AlertDescription>
+                    </Alert>
+                }
             }
          </div>
     </div>

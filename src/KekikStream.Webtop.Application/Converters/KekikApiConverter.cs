@@ -271,7 +271,7 @@ namespace KekikStream.Webtop.Converters
         {
             try
             {
-                //Debug.WriteLine("MediaInfo: " + json);
+                Debug.WriteLine("MediaInfo: " + json);
                 //JObject? result = JObject.Parse(json);
                 JObject? result = await JObject.LoadAsync(new JsonTextReader(new StringReader(json)));
 
@@ -402,7 +402,7 @@ namespace KekikStream.Webtop.Converters
         {
             try
             {
-                //Debug.WriteLine("VideoLinks: " + json);
+                Debug.WriteLine("VideoLinks: " + json);
                 JObject? result = await JObject.LoadAsync(new JsonTextReader(new StringReader(json)));
 
                 if (result != null)

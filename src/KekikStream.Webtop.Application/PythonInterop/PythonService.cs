@@ -27,6 +27,10 @@ namespace KekikStream.PythonInterop
             //var result = CheckLocalPython();
 
             // PS C:\Users\serdar_dell\AppData\Roaming\Python\Python312\site-packages\KekikStreamAPI> python basla.py
+
+            // PS C:\Users\metek\AppData\Roaming\Python\Python313\site-packages\KekikStreamAPI> pip install -r requirements.txt
+            // PS C:\Users\metek\AppData\Roaming\Python\Python313\site-packages\KekikStreamAPI> python basla.py
+
         }
 
         /// <summary>
