@@ -4,6 +4,9 @@
 
 [KekikStream](https://github.com/keyiflerolsun/KekikStream) ve [KekikStreamAPI](https://github.com/keyiflerolsun/KekikStreamAPI) ile entegre web tabanlı cross platform masaüstü uygulaması
 
+### Uyarı!
+Windows 11 kullanıcıları [burada](https://github.com/keyiflerolsun/KekikStreamAPI/issues/4) ve [burada](https://github.com/keyiflerolsun/KekikStreamAPI/issues/1) bahsedilen sorunları incelemeleri gerekir.
+
 ### Bağımlılıklar
 
 * [.NET9.0+ SDK](https://dotnet.microsoft.com/download/dotnet)
