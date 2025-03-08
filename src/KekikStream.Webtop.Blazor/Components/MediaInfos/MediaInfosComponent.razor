@@ -10,42 +10,69 @@
     <CloseButton />
 </ModalHeader>
 <ModalBody>
-<LoadingIndicator @bind-Visible="@isBusy">
-    <Container>
-        <Row>
-            <Column>
-                <Card>
-                    <CardBody>
-                        <Row style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start;">
-                            <Column sm="4" style="flex: 0 0 200px; max-width: 200px; margin-bottom: 10px;">
-                                <img src="@mediaInfo?.Poster" class="img-fluid" style="max-width: 100%; height: auto;" />
-                            </Column>
-                            <Column style="flex: 1; margin-top: 0; margin-bottom: 10px;">
-                                <p>@mediaInfo?.Description</p>
-                                <p><strong>Imdb:</strong> @mediaInfo?.Rating | <strong>@L["Year"]:</strong> @mediaInfo?.Year |  <strong>@L["Tags"]:</strong> @mediaInfo.Tags</p>
-                                <p><strong>@L["Actors"]:</strong> @mediaInfo?.Actors</p>
-                            </Column>
-                        </Row>
+    <LoadingIndicator @bind-Visible="@isBusy">
+        <Container>
+            <Row>
+                <Column>
+                    <Card>
+                        <CardBody>
+                            <Row style="display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start;">
+                                <Column sm="4" style="flex: 0 0 200px; max-width: 200px; margin-bottom: 10px;">
+                                    <img src="@mediaInfo?.Poster" class="img-fluid" style="max-width: 100%; height: auto;" />
+                                </Column>
+                                <Column style="flex: 1; margin-top: 0; margin-bottom: 10px;">
+                                    <p>@mediaInfo?.Description</p>
+                                    <p><strong>Imdb:</strong> @mediaInfo?.Rating | <strong>@L["Year"]:</strong> @mediaInfo?.Year |  <strong>@L["Tags"]:</strong> @mediaInfo.Tags</p>
+                                    <p><strong>@L["Actors"]:</strong> @mediaInfo?.Actors</p>
+                                </Column>
+                            </Row>
 
-                        @* <Row>
+                            @* <Row>
                             <Column>
                                 <p style="text-align:center"><strong>@L["Actors"]:</strong> @mediaInfo?.Actors</p>
                             </Column>
                         </Row> *@
 
-                        <Row>
-                            @if(videoLink != null && videoLink.VideoSources.Count > 0){
+                            <Row>
+                                @if(videoLink != null && videoLink.VideoSources.Count > 0){
                                     <Buttons>
                                         @foreach(var source in videoLink.VideoSources){
-                                            <Button Color="Color.Secondary">@source.Name</Button>
+                                            <Button Color="Color.Secondary" style="margin:1px" Clicked='() => SetVideoSource(source)'>@source.Name</Button>
                                         }
                                     </Buttons>
-                            }
-                               
-                            <Column>
-                                    @* <video width="100%" source="@videoSource" /> *@
+                                }
+
+                                <Column>
+                                    <video width="100%" controls playsinline src="@videoUrl" type="video/mp4">
+                                        @if (subTitles != null && subTitles.Count > 0)
+                                        {
+                                            @foreach (var sub in subTitles)
+                                            {
+                                                <track kind="subtitles" label="@sub.Name"
+                                                       srclang="@sub.Name.ToLower()"
+                                                       src="@sub.Url" default />
+                                            }
+                                        }
+                                    </video>
+                                   
                                     @* <Video Source="@("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")" /> *@
-                                    <Video @ref="videoPlayer" Source="@videoUrl" Poster="@mediaInfo?.Poster" />
+
+                                    @* <Video @ref="videoPlayer" Source="@videoUrl" Poster="@mediaInfo?.Poster" Controls 
+                                           SettingsList="[VideoSettingsType.Captions, VideoSettingsType.Quality, VideoSettingsType.Speed]" 
+                                           ControlsList="[VideoControlsType.PlayLarge, VideoControlsType.Play, VideoControlsType.Progress, VideoControlsType.CurrentTime, VideoControlsType.Mute, VideoControlsType.Volume, VideoControlsType.Captions, VideoControlsType.Settings, VideoControlsType.Pip, VideoControlsType.Airplay, VideoControlsType.Fullscreen]">
+
+                                        <track kind="captions" label="Türkçe" srclang="tr" src="https://storage.diziyou2.com/subtitles/25751/tr.vtt" />
+                                        @if (subTitles != null && subTitles.Count > 0)
+                                        {
+                                            @foreach (var sub in subTitles)
+                                            {
+                                                <track kind="captions" label="@sub.Name"
+                                                srclang="en"
+                                                src="@sub.Url" default
+                                                />
+                                            }
+                                        }
+                                   </Video> *@
                                 </Column>
                         </Row>
 
@@ -147,6 +174,6 @@
     private async Task CancelAsync()
     {
         await ModelInfoComponentService.Hide();
-        await videoPlayer?.Stop();
+        //await videoPlayer?.Stop();
     }
 }
