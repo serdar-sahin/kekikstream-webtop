@@ -1,5 +1,7 @@
 ﻿# KekikStream.Webtop
 
+**⚠️ Bu proje daha fazla geliştirilmeyecektir. Meraklısı ve eklenti geliştiricileri için çok yakında: [MediaManiac](https://github.com/MediaManiacs)  **
+
 ## KekikStream Web Tabanlı Desktop Uygulama
 
 [KekikStream](https://github.com/keyiflerolsun/KekikStream) ve [KekikStreamAPI](https://github.com/keyiflerolsun/KekikStreamAPI) ile entegre web tabanlı cross platform masaüstü uygulaması
