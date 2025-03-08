@@ -9,6 +9,7 @@ using Blazorise.Video;
 using Blazorise;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 
 namespace KekikStream.Webtop.Blazor.Components.MediaInfos
 {
@@ -23,7 +24,7 @@ namespace KekikStream.Webtop.Blazor.Components.MediaInfos
         public MediaInfo? mediaInfo { get; set; }
 
         // blazorise video player
-        //private Video videoPlayer;
+        private Video videoPlayer;
         private VideoSource videoSource;
         private List<Subtitle> subTitles;
 
@@ -34,28 +35,40 @@ namespace KekikStream.Webtop.Blazor.Components.MediaInfos
 
         private bool isBusy = false;
         private bool isVideoSource = false;
-        private string videoUrl = "";
+        private string videoUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
         public MediaInfosComponent(IUiNotificationService notificationService) 
         {
             _notificationService = notificationService;
         }
 
-        //protected override async Task OnInitializedAsync()
-        //{
-        //    isBusy = true;
-        //    await Task.Delay(10000);
-        //    isBusy = false;
-        //}
+        protected override async Task OnInitializedAsync()
+        {
+            videoSource = new VideoSource();
+
+            //isBusy = true;
+            //await Task.Delay(10000);
+            //isBusy = false;
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await GetVideoLinks(mediaInfo.Url);
+            }
+        }
 
         private void SetVideoSource(VideoSourceModel source)
         {
             isBusy = true;
-            //videoPlayer?.Stop();
+            videoPlayer?.Stop();
             videoUrl = source.Url;
             subTitles = source.Subtitles;
             Debug.WriteLine(subTitles.ToJson());
             isBusy = false;
+
+            StateHasChanged();
         }
 
         private async Task GetVideoLinks(string url)
@@ -75,25 +88,32 @@ namespace KekikStream.Webtop.Blazor.Components.MediaInfos
                     subTitles = videoLink.VideoSources[0].Subtitles;
                     //Debug.WriteLine(subTitles.ToJson());
 
-                    //videoSource = new VideoSource();
+                    videoSource = new VideoSource();
 
-                    //var videoMedias = new ValueEqualityList<VideoMedia>();
-                    //var videoTracks = new ValueEqualityList<VideoTrack>();
+                    var videoMedias = new ValueEqualityList<VideoMedia>();
+                    var videoTracks = new ValueEqualityList<VideoTrack>();
 
-                    //foreach (var source in videoLink.VideoSources)
-                    //{
-                    //    var videoMedia = new VideoMedia(source.Url);
-                    //    videoMedias.Add(videoMedia);
+                    foreach (var source in videoLink.VideoSources)
+                    {
+                        var videoMedia = new VideoMedia(source.Url);
+                        videoMedias.Add(videoMedia);
 
-                    //    foreach (var sub in source.Subtitles)
-                    //    {
-                    //        var track = new VideoTrack(sub.Url, sub.Name);
-                    //        videoTracks.Add(track);
-                    //    }
-                    //}
+                        foreach (var sub in source.Subtitles)
+                        {
+                            var track = new VideoTrack(sub.Url) 
+                            {  
+                              Kind = "subtitles",
+                              Label = sub.Name,
+                              Language = sub.Name.ToLower(),
+                              Source = sub.Url,
+                              Type = Path.GetExtension(sub.Url)
+                            };
+                            videoTracks.Add(track);
+                        }
+                    }
 
-                    //videoSource.Medias = videoMedias;
-                    //videoSource.Tracks = videoTracks;
+                    videoSource.Medias = videoMedias;
+                    videoSource.Tracks = videoTracks;
 
                     //videoPlayer.Source = videoSource;
                 }
@@ -163,7 +183,7 @@ namespace KekikStream.Webtop.Blazor.Components.MediaInfos
 
         public async ValueTask DisposeAsync()
         {
-            //videoPlayer?.DisposeAsync();
+            videoPlayer?.DisposeAsync();
             //await ValueTask.CompletedTask;
         }
     }

@@ -43,7 +43,9 @@
                                 }
 
                                 <Column>
-                                    <video width="100%" controls playsinline src="@videoUrl" type="video/mp4">
+                                   <Video @ref="videoPlayer" Source="@videoSource" Poster="@mediaInfo?.Poster" />
+                                   
+                                   @*  <video width="100%" controls playsinline src="@videoUrl" type="video/mp4">
                                         @if (subTitles != null && subTitles.Count > 0)
                                         {
                                             @foreach (var sub in subTitles)
@@ -53,11 +55,11 @@
                                                        src="@sub.Url" default />
                                             }
                                         }
-                                    </video>
+                                    </video> *@
                                    
                                     @* <Video Source="@("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")" /> *@
 
-                                    @* <Video @ref="videoPlayer" Source="@videoUrl" Poster="@mediaInfo?.Poster" Controls 
+                                   @*  <Video @ref="videoPlayer" Source="@videoUrl" Poster="@mediaInfo?.Poster" Controls 
                                            SettingsList="[VideoSettingsType.Captions, VideoSettingsType.Quality, VideoSettingsType.Speed]" 
                                            ControlsList="[VideoControlsType.PlayLarge, VideoControlsType.Play, VideoControlsType.Progress, VideoControlsType.CurrentTime, VideoControlsType.Mute, VideoControlsType.Volume, VideoControlsType.Captions, VideoControlsType.Settings, VideoControlsType.Pip, VideoControlsType.Airplay, VideoControlsType.Fullscreen]">
 
@@ -67,7 +69,7 @@
                                             @foreach (var sub in subTitles)
                                             {
                                                 <track kind="captions" label="@sub.Name"
-                                                srclang="en"
+                                                       srclang="@sub.Name.ToLower()"
                                                 src="@sub.Url" default
                                                 />
                                             }
@@ -174,6 +176,6 @@
     private async Task CancelAsync()
     {
         await ModelInfoComponentService.Hide();
-        //await videoPlayer?.Stop();
+        await videoPlayer?.Stop();
     }
 }

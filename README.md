@@ -5,7 +5,7 @@
 [KekikStream](https://github.com/keyiflerolsun/KekikStream) ve [KekikStreamAPI](https://github.com/keyiflerolsun/KekikStreamAPI) ile entegre web tabanlı cross platform masaüstü uygulaması
 
 ### Uyarı!
-Windows 11 kullanıcıları [burada](https://github.com/keyiflerolsun/KekikStreamAPI/issues/4) ve [burada](https://github.com/keyiflerolsun/KekikStreamAPI/issues/1) bahsedilen sorunları incelemeleri gerekir.
+Windows kullanıcıları [burada](https://github.com/keyiflerolsun/KekikStreamAPI/issues/4) ve [burada](https://github.com/keyiflerolsun/KekikStreamAPI/issues/1) bahsedilen sorunları incelemeleri gerekir.
 
 ### Bağımlılıklar
 
@@ -24,3 +24,21 @@ windows kullanıcıları: KekikStream.Webtop.Blazor.exe
 linux ve macos kullanıcıları: dotnet KekikStream.Webtop.Blazor.dll
 
 http://localhost:5000
+
+
+## Teşekkürler:
+
++ [KekikStream](https://github.com/keyiflerolsun/KekikStream) 
++ [KekikStreamAPI](https://github.com/keyiflerolsun/KekikStreamAPI)
++ [ABP](https://github.com/abpframework/abp)
++ Ve daha niceleri... 
+
+## Ekran Görüntüleri
+
+![](images/webtop1.PNG)
+
+![](images/webtop2.PNG)
+
+![](images/webtop3.PNG)
+
+![](images/webtop4.PNG)
