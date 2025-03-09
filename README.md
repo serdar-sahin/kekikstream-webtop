@@ -21,6 +21,8 @@ Windows kullanıcıları [burada](https://github.com/keyiflerolsun/KekikStreamAP
 * pip install -U KekikStream
 * start KekikStreamAPI
 
+https://github.com/serdar-sahin/kekikstream-webtop/releases
+
 windows kullanıcıları: KekikStream.Webtop.Blazor.exe
 
 linux ve macos kullanıcıları: dotnet KekikStream.Webtop.Blazor.dll
